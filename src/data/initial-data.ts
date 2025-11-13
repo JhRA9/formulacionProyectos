@@ -48,21 +48,6 @@ export const personalYear1: PersonalRow[] = [
   },
   {
     id: "p1-4",
-    descripcion: "Auxiliar de Calidad",
-    cantidad: 1,
-    sueldoMensual: 1800000,
-    sueldoAnual: 21600000,
-    primas: 1800000,
-    cesantias: 150000,
-    interesesCesantias: 18000,
-    salud: 153000,
-    pension: 216000,
-    arl: 9396,
-    vacaciones: 900000,
-    total: 24846396
-  },
-  {
-    id: "p1-5",
     descripcion: "Auxiliar de Inventarios",
     cantidad: 1,
     sueldoMensual: 2000000,
@@ -77,7 +62,7 @@ export const personalYear1: PersonalRow[] = [
     total: 27607106
   },
   {
-    id: "p1-6",
+    id: "p1-5",
     descripcion: "Coordinador de compras/abastecimiento",
     cantidad: 1,
     sueldoMensual: 3000000,
@@ -92,7 +77,7 @@ export const personalYear1: PersonalRow[] = [
     total: 41410660
   },
   {
-    id: "p1-7",
+    id: "p1-6",
     descripcion: "Analista de Mercado",
     cantidad: 1,
     sueldoMensual: 3200000,
@@ -107,7 +92,7 @@ export const personalYear1: PersonalRow[] = [
     total: 44171370
   },
   {
-    id: "p1-8",
+    id: "p1-7",
     descripcion: "Gerente de Finanzas",
     cantidad: 1,
     sueldoMensual: 7000000,
@@ -122,7 +107,7 @@ export const personalYear1: PersonalRow[] = [
     total: 96624873
   },
   {
-    id: "p1-9",
+    id: "p1-8",
     descripcion: "Analista de Costos o Presupuestos",
     cantidad: 1,
     sueldoMensual: 4500000,
@@ -137,7 +122,7 @@ export const personalYear1: PersonalRow[] = [
     total: 62115990
   },
   {
-    id: "p1-10",
+    id: "p1-9",
     descripcion: "Contadora",
     cantidad: 1,
     sueldoMensual: 4800000,
@@ -152,7 +137,7 @@ export const personalYear1: PersonalRow[] = [
     total: 66257056
   },
   {
-    id: "p1-11",
+    id: "p1-10",
     descripcion: "Auxiliar de Caja",
     cantidad: 1,
     sueldoMensual: 2200000,
@@ -167,7 +152,7 @@ export const personalYear1: PersonalRow[] = [
     total: 30367817
   },
   {
-    id: "p1-12",
+    id: "p1-11",
     descripcion: "Gerente de Marketing",
     cantidad: 1,
     sueldoMensual: 6000000,
@@ -182,22 +167,7 @@ export const personalYear1: PersonalRow[] = [
     total: 82821320
   },
   {
-    id: "p1-13",
-    descripcion: "Coordinador de Publicidad y Medios",
-    cantidad: 1,
-    sueldoMensual: 4200000,
-    sueldoAnual: 50400000,
-    primas: 4200000,
-    cesantias: 350000,
-    interesesCesantias: 42000,
-    salud: 357000,
-    pension: 504000,
-    arl: 21924,
-    vacaciones: 2100000,
-    total: 57974924
-  },
-  {
-    id: "p1-14",
+    id: "p1-12",
     descripcion: "Coordinador de Estrategias Comerciales",
     cantidad: 1,
     sueldoMensual: 4000000,
@@ -212,7 +182,7 @@ export const personalYear1: PersonalRow[] = [
     total: 55214213
   },
   {
-    id: "p1-15",
+    id: "p1-13",
     descripcion: "Coordinador de Servicio al Cliente",
     cantidad: 1,
     sueldoMensual: 3800000,
@@ -227,22 +197,7 @@ export const personalYear1: PersonalRow[] = [
     total: 52453503
   },
   {
-    id: "p1-16",
-    descripcion: "Diseñador Gráfico",
-    cantidad: 1,
-    sueldoMensual: 2800000,
-    sueldoAnual: 33600000,
-    primas: 2800000,
-    cesantias: 233333,
-    interesesCesantias: 28000,
-    salud: 238000,
-    pension: 336000,
-    arl: 14616,
-    vacaciones: 1400000,
-    total: 38649949
-  },
-  {
-    id: "p1-17",
+    id: "p1-14",
     descripcion: "Gerente de Operaciones de Cocina",
     cantidad: 1,
     sueldoMensual: 6500000,
@@ -257,22 +212,7 @@ export const personalYear1: PersonalRow[] = [
     total: 89723097
   },
   {
-    id: "p1-18",
-    descripcion: "Coordinador de Producción",
-    cantidad: 1,
-    sueldoMensual: 4500000,
-    sueldoAnual: 54000000,
-    primas: 4500000,
-    cesantias: 375000,
-    interesesCesantias: 45000,
-    salud: 382500,
-    pension: 540000,
-    arl: 23490,
-    vacaciones: 2250000,
-    total: 62115990
-  },
-  {
-    id: "p1-19",
+    id: "p1-15",
     descripcion: "Coordinador de Calidad y Seguridad Alimentaria",
     cantidad: 1,
     sueldoMensual: 4000000,
@@ -287,37 +227,7 @@ export const personalYear1: PersonalRow[] = [
     total: 55214213
   },
   {
-    id: "p1-20",
-    descripcion: "Auxiliar de Control de Calidad",
-    cantidad: 1,
-    sueldoMensual: 2000000,
-    sueldoAnual: 24000000,
-    primas: 2000000,
-    cesantias: 166667,
-    interesesCesantias: 20000,
-    salud: 170000,
-    pension: 240000,
-    arl: 10440,
-    vacaciones: 1000000,
-    total: 27607107
-  },
-  {
-    id: "p1-21",
-    descripcion: "Pastelero",
-    cantidad: 1,
-    sueldoMensual: 2800000,
-    sueldoAnual: 33600000,
-    primas: 2800000,
-    cesantias: 233333,
-    interesesCesantias: 28000,
-    salud: 238000,
-    pension: 336000,
-    arl: 14616,
-    vacaciones: 1400000,
-    total: 38649949
-  },
-  {
-    id: "p1-22",
+    id: "p1-16",
     descripcion: "Cocinero",
     cantidad: 1,
     sueldoMensual: 2600000,
@@ -345,15 +255,15 @@ export const materiaPrima: MateriaPrimaRow[] = [
     id: "mp-2",
     descripcion: "Queso campesino",
     cantidad: 0.02,
-    costoUnitario: 21000,
-    costoTotal: 462
+    costoUnitario: 10000,
+    costoTotal: 220
   },
   {
     id: "mp-3",
     descripcion: "Mantequilla",
     cantidad: 0.01,
-    costoUnitario: 14900,
-    costoTotal: 149
+    costoUnitario: 8000,
+    costoTotal: 80
   },
   {
     id: "mp-4",
@@ -366,8 +276,8 @@ export const materiaPrima: MateriaPrimaRow[] = [
     id: "mp-5",
     descripcion: "Sal",
     cantidad: 0.01,
-    costoUnitario: 6000,
-    costoTotal: 42
+    costoUnitario: 5000,
+    costoTotal: 35
   },
   {
     id: "mp-6",
@@ -612,14 +522,6 @@ export const inversiones: InversionRow[] = [
   },
   {
     id: "inv-5",
-    descripcion: "Equipo de reparto",
-    inversionTotal: 86500000,
-    fondosPropios: 47575000,
-    banco: 25950000,
-    otrasFuentes: 12975000
-  },
-  {
-    id: "inv-6",
     descripcion: "Programas IOT",
     inversionTotal: 40320000,
     fondosPropios: 22176000,
@@ -718,278 +620,290 @@ export const depreciacion: DepreciacionRow[] = [
     porcentajeSalvamento: 0,
     valorSalvamento: 0
   }
+
 ];
 
 export const estadoResultados: EstadoResultadosRow[] = [
   {
     id: "er-1",
-    detalle: "Unidades a producir",
-    año1: 6000,
-    año2: 4200,
-    año3:0,
-    año4:0,
-    año5:0
+    detalle: "Produccion",
+    año1: 72000,
+    año2: 86400,
+    año3:90720,
+    año4:92534,
+    año5:94385,
+    año6: 96273,
+    año7: 98198,
+    año8:100162,
+    año9:102165,
+    año10:104209
   },
   {
     id: "er-2",
-    detalle: "Precios por unidad",
-    año1: 228459,
-    año2: 6670,
-    año3: 0,
-    año4: 0,
-    año5: 0
+    detalle: "Ingreso",
+    año1: 957679664,
+    año2: 1149215597,
+    año3:1206676377,
+    año4:1230809904,
+    año5:1255426103,
+    año6: 1280534625,
+    año7: 1306145317,
+    año8:1332268223,
+    año9:1358913588,
+    año10:1386091860
   },
   {
     id: "er-3",
-    detalle: "ingresos por ventas",
-    año1: 1370756629,
-    año2: 28014000,
-    año3: 0,
-    año4: 0,
-    año5: 0
-  },
-  {
-    id: "er-4",
-    detalle: "costo del producto",
-    año1: 309200713,
-    año2: 333936568,
-    año3: 0,
-    año4: 0,
-    año5: 0
-  },
-  {
-    id: "er-5",
-    detalle: "Mano de obra directa",
-    año1: 309199595,
-    año2: 333935563,
-    año3: 0,
-    año4: 0,
-    año5: 0
-  },
-  {
-    id: "er-6",
-    detalle: "Materia prima directa",
-    año1: 972,
-    año2: 1006,
-    año3: 0,
-    año4: 0,
-    año5: 0
-  },
-  {
-    id: "er-7",
-    detalle: "Costo indirecto de fabricacion",
-    año1: 146,
+    detalle: "Venta de Maq",
+    año1: 0,
     año2: 0,
     año3: 0,
     año4: 0,
-    año5: 0
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: 43025000,
+    año9: 0,
+    año10: 0
+  },
+  {
+    id: "er-4",
+    detalle: "Costos Variables",
+    año1: -418389185,
+    año2: -502067022,
+    año3: -527170373,
+    año4: -537713781,
+    año5: -548468056,
+    año6: -559437417,
+    año7: -570626166,
+    año8: -582038689,
+    año9: -593679463,
+    año10: -605553052
+  },
+  {
+    id: "er-5",
+    detalle: "Costos Fijos",
+    año1: -491406496,
+    año2: -491406496,
+    año3: -491406496,
+    año4: -491406496,
+    año5: -491406496,
+    año6: -491406496,
+    año7: -491406496,
+    año8: -491406496,
+    año9: -491406496,
+    año10: -491406496
+  },
+  {
+    id: "er-6",
+    detalle: "Depre.const",
+    año1: -50000,
+    año2: -50000,
+    año3: -50000,
+    año4: -50000,
+    año5: -50000,
+    año6: -50000,
+    año7: -50000,
+    año8: -50000,
+    año9: -50000,
+    año10: -50000
+  },
+  {
+    id: "er-7",
+    detalle: "Depre.Maquinas",
+    año1: -8605000,
+    año2: -8605000,
+    año3: -8605000,
+    año4: -8605000,
+    año5: -8605000,
+    año6: -8605000,
+    año7: -8605000,
+    año8: -8605000,
+    año9: -8605000,
+    año10: -8605000
   },
   {
     id: "er-8",
-    detalle: "Utilidad neta",
-    año1: 1061555917,
-    año2: -305922568,
+    detalle: "Valor en Libros",
+    año1: 0,
+    año2: 0,
     año3: 0,
     año4: 0,
-    año5: 0
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: 2500000,
+    año9: 0,
+    año10: 0
   },
   {
     id: "er-9",
-    detalle:"Gastos de operacion",
-    año1: 858564817,
-    año2: 950952613,
-    año3: 0,
-    año4: 0,
-    año5: 0
+    detalle: "UTILIDAD ANTES DE IMPUESTOS",
+    año1: 39228983,
+    año2: 147087079,
+    año3:179444508,
+    año4:193034628,
+    año5:206896550,
+    año6: 221035711,
+    año7: 235457655,
+    año8:250168038,
+    año9:265172629,
+    año10:280477312
   },
   {
     id: "er-10",
-    detalle: "GASTOS DE ADMINISTRACION",
-    año1: 522420857,
-    año2: 553189591,
+    detalle: "Impuestos",
+    año1: -6668927,
+    año2: -25004803,
+    año3: -30505566,
+    año4: -32815887,
+    año5: -35172414,
+    año6: -37576071,
+    año7: -40027801,
+    año8: -42528567,
+    año9: -45079347,
+    año10: -47681143
+  },
+  {
+    id: "er-11",
+    detalle: "Utilidad Neta",
+    año1: 32560056,
+    año2: 122082276,
+    año3:148938941,
+    año4:160218741,
+    año5:171724137,
+    año6: 183459640,
+    año7: 195429854,
+    año8:207639472,
+    año9:220093282,
+    año10:232796169
+  },
+  {
+    id: "er-12",
+    detalle: "Depre.Const",
+    año1: 50000,
+    año2: 50000,
+    año3: 50000,
+    año4: 50000,
+    año5: 50000,
+    año6: 50000,
+    año7: 50000,
+    año8: 50000,
+    año9: 50000,
+    año10: 50000
+  },
+  {
+    id: "er-13",
+    detalle: "Depre.Maquinas",
+    año1: 8605000,
+    año2: 8605000,
+    año3: 8605000,
+    año4: 8605000,
+    año5: 8605000,
+    año6: 8605000,
+    año7: 8605000,
+    año8: 8605000,
+    año9: 8605000,
+    año10: 8605000
+  },
+  {
+    id: "er-14",
+    detalle: "Valor en Libros",
+    año1: 0,
+    año2: 0,
     año3: 0,
     año4: 0,
-    año5: 0
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: -2500000,
+    año9: 0,
+    año10: 0
   },
-  { id: "er-11", 
-    detalle: "Sueldos y salarios de admon", 
-    año1: 516252892, 
-    año2: 574222366, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
+  {
+    id: "er-15",
+    detalle: "Terreno",
+    año1: 0,
+    año2: 0,
+    año3: 0,
+    año4: 0,
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: 0,
+    año9: 0,
+    año10: 0
   },
-  { 
-    id: "er-12", 
-    detalle: "Depreciacion - equipo de reparto", 
-    año1: 27200739, 
-    año2: 0, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
+  {
+    id: "er-16",
+    detalle: "Construccion",
+    año1: 0,
+    año2: 0,
+    año3: 0,
+    año4: 0,
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: 0,
+    año9: 0,
+    año10: 0
   },
-  { 
-    id: "er-13", 
-    detalle: "Amortizacion gastos de organización", 
-    año1: -21033818, 
-    año2: -21033818, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
+  {
+    id: "er-17",
+    detalle: "Maquinaria",
+    año1: 0,
+    año2: 0,
+    año3: 0,
+    año4: 0,
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: -86050000,
+    año9: 0,
+    año10: 0
   },
-  { 
-    id: "er-14", 
-    detalle: "Gastos de papeleria y útiles", 
-    año1: 666, 
-    año2: 666, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
+  {
+    id: "er-18",
+    detalle: "Capital de trabajo",
+    año1: -41838919,
+    año2: -12551676,
+    año3: -5271704,
+    año4: -5377138,
+    año5: -5484681,
+    año6: -5594374,
+    año7: -5706262,
+    año8: -5820387,
+    año9: -5936795,
+    año10: 548479774
   },
-  { 
-    id: "er-15", 
-    detalle: "Gastos de energía / gas", 
-    año1: 111, 
-    año2: 111, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-16", 
-    detalle: "Gastos de agua", 
-    año1: 89, 
-    año2: 89, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
-  },
-  { 
-    id: "er-17", 
-    detalle: "Gastos de tele. e internet", 
-    año1: 89, 
-    año2: 89, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-18", 
-    detalle: "Gastos de accesorios", 
-    año1: 89, 
-    año2: 89, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
-  },
-  { 
-    id: "er-19", 
-    detalle: "Gastos de alquiler", 
-    año1: 0, 
-    año2: 0, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
+  {
+    id: "er-19",
+    detalle: "Flujo del proyecto",
+    año1: -623862,
+    año2: 118185600,
+    año3:152322238,
+    año4:163496603,
+    año5:174894456,
+    año6: 97970266,
+    año7: 198378592,
+    año8:210474085,
+    año9:222811488,
+    año10:789930943
   },
   {
     id: "er-20",
-    detalle: "GASTOS DE VENTA",
-    año1: 336143960,
-    año2: 397763022,
+    detalle: "ROI",
+    año1: 0,
+    año2: 0,
     año3: 0,
     año4: 0,
-    año5: 0
-  },
-  { id: "er-21", 
-    detalle: "Sueldos y salarios de venta", 
-    año1: 248463960, 
-    año2: 310083022, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-22", detalle: "Depreciación equipos de reparto", 
-    año1: 17300000, 
-    año2: 17300000, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-23", detalle: "Gastos por repuestos", 
-    año1: 12000, 
-    año2: 12000, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-24", detalle: "Gastos de combustibles", 
-    año1: 48000, 
-    año2: 48000, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-25", detalle: "Gastos de publicidad", 
-    año1: 40320000, 
-    año2: 40320000, 
-    año3: 0, 
-    año4: 0,
-    año5: 0 },
-  { 
-    id: "er-26", detalle: "Gastos de promoción", 
-    año1: 30000000, 
-    año2: 30000000, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-27", detalle: "UTILIDAD DE OPERACIÓN", 
-    año1: 202991100, 
-    año2: -1256875181, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-28", detalle: "GASTOS FINANCIEROS", 
-    año1: 24196757, 
-    año2: 23426573, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-29", detalle: "Banco comercial", 
-    año1: 18147568, 
-    año2: 17628043, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-30", detalle: "Otras fuentes", 
-    año1: 6049189, 
-    año2: 5798530, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-31", detalle: "UTILIDAD ANTES DE IMPUESTO", 
-    año1: 178794343, 
-    año2: -1280301754, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-32", detalle: "IMPUESTOS", 
-    año1: 1787943429, 
-    año2: -320075439, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 },
-  { 
-    id: "er-33", detalle: "UTILIDAD NETA", 
-    año1: -1609149086, 
-    año2: 0, 
-    año3: 0, 
-    año4: 0, 
-    año5: 0 
-  }  
+    año5: 0,
+    año6: 0,
+    año7: 0,
+    año8: 0,
+    año9: 0,
+    año10: 0
+  }
 ];
 
 export const flujoEfectivo: FlujoEfectivoRow[] = [
@@ -1035,16 +949,6 @@ export const flujoEfectivo: FlujoEfectivoRow[] = [
   },
   {
     id: "fe-5",
-    detalle: "Flujo de efectivo en venta de Act",
-    año0: -8488700,
-    año1: 3147777,
-    año2: 3265237,
-    año3: 3388569.28,
-    año4: 3518069,
-    año5: 5814043
-  },
-  {
-    id: "fe-6",
     detalle: "Pago de capital",
     año0: 0,
     año1: -228483,
@@ -1054,7 +958,7 @@ export const flujoEfectivo: FlujoEfectivoRow[] = [
     año5: -228483
   },
   {
-    id: "fe-7",
+    id: "fe-6",
     detalle: "Rescate del Capital de Trabajo",
     año0: 0,
     año1: 0,
@@ -1062,7 +966,17 @@ export const flujoEfectivo: FlujoEfectivoRow[] = [
     año3: 0,
     año4: 0,
     año5: 2160000
-  }
+  },
+  {
+    id: "fe-7",
+    detalle: "Flujo de efectivo en venta de Act",
+    año0: -8488700,
+    año1: 3147777,
+    año2: 3265237,
+    año3: 3388569.28,
+    año4: 3518069,
+    año5: 5814043
+  },
 ];
 
 export const razonesFinancieras: RazonesFinancierasRow[] = [

@@ -11,6 +11,13 @@
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "es6",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
   }
 }

@@ -66,6 +66,11 @@ export interface EstadoResultadosRow {
   año3: number;
   año4: number;
   año5: number;
+  año6: number;
+  año7: number;
+  año8: number;
+  año9: number;
+  año10: number;
 }
 
 export interface FlujoEfectivoRow {

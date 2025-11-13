@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DataTable } from "@/components/DataTable";
 import { EditDialog } from "@/components/EditDialog";
 import { toast } from "sonner";
-import { useLocalStorage } from "@/hooks/use-local-storage";
 import { 
   Users, 
   Package, 
@@ -14,39 +13,58 @@ import {
   TrendingDown,
   BarChart3,
   LineChart,
-  Percent,
-  Download,
-  RotateCcw
+  Percent
 } from "lucide-react";
 import {
   personalYear1 as initialPersonal,
   materiaPrima as initialMateriaPrima,
   equipos as initialEquipos,
   inversiones as initialInversiones,
-  amortizacion as initialAmortizacion,
-  depreciacion as initialDepreciacion,
-  estadoResultados as initialEstadoResultados,
-  flujoEfectivo as initialFlujoEfectivo,
-  razonesFinancieras as initialRazonesFinancieras
+  depreciacion as initialDepreciacion
 } from "@/data/initial-data";
+import {
+  calculateDepreciacion,
+  calculateAmortizacion,
+  calculateEstadoResultados,
+  calculateFlujoEfectivo,
+  calculateRazonesFinancieras
+} from "@/utils/calculations";
 import { PersonalRow, MateriaPrimaRow, EquipoRow, InversionRow, AmortizacionRow, DepreciacionRow, EstadoResultadosRow, FlujoEfectivoRow, RazonesFinancierasRow } from "@/types/excel-data";
 
 const Index = () => {
-  const [personal, setPersonal] = useLocalStorage<PersonalRow[]>('ecolatte_personal', initialPersonal);
-  const [materiaPrima, setMateriaPrima] = useLocalStorage<MateriaPrimaRow[]>('ecolatte_materiaPrima', initialMateriaPrima);
-  const [equipos, setEquipos] = useLocalStorage<EquipoRow[]>('ecolatte_equipos', initialEquipos);
-  const [inversiones, setInversiones] = useLocalStorage<InversionRow[]>('ecolatte_inversiones', initialInversiones);
-  const [amortizacion, setAmortizacion] = useLocalStorage<AmortizacionRow[]>('ecolatte_amortizacion', initialAmortizacion);
-  const [depreciacion, setDepreciacion] = useLocalStorage<DepreciacionRow[]>('ecolatte_depreciacion', initialDepreciacion);
-  const [estadoResultados, setEstadoResultados] = useLocalStorage<EstadoResultadosRow[]>('ecolatte_estadoResultados', initialEstadoResultados);
-  const [flujoEfectivo, setFlujoEfectivo] = useLocalStorage<FlujoEfectivoRow[]>('ecolatte_flujoEfectivo', initialFlujoEfectivo);
-  const [razonesFinancieras, setRazonesFinancieras] = useLocalStorage<RazonesFinancierasRow[]>('ecolatte_razonesFinancieras', initialRazonesFinancieras);
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(value);
+  };
+
+  const [personal, setPersonal] = useState<PersonalRow[]>(initialPersonal);
+  const [materiaPrima, setMateriaPrima] = useState<MateriaPrimaRow[]>(initialMateriaPrima);
+  const [equipos, setEquipos] = useState<EquipoRow[]>(initialEquipos);
+  const [inversiones, setInversiones] = useState<InversionRow[]>(initialInversiones);
+
+  // Estados calculados
+  const [depreciacion, setDepreciacion] = useState<DepreciacionRow[]>(initialDepreciacion);
+  const [amortizacion, setAmortizacion] = useState<AmortizacionRow[]>([]);
+  const [estadoResultados, setEstadoResultados] = useState<EstadoResultadosRow[]>([]);
+  const [flujoEfectivo, setFlujoEfectivo] = useState<FlujoEfectivoRow[]>([]);
+  const [razonesFinancieras, setRazonesFinancieras] = useState<RazonesFinancierasRow[]>([]);
+
+  // Editable state for Estado de Resultados
+  const [editableEstadoResultados, setEditableEstadoResultados] = useState<EstadoResultadosRow[]>([]);
 
   // New state for loan info inputs
   const [bank, setBank] = useState("Banco XYZ");
   const [capital, setCapital] = useState(100819821);
   const [periodo, setPeriodo] = useState(12);
   const [tasa, setTasa] = useState(18);
+
+  // New state for Materia Prima calculations
+  const [produccion, setProduccion] = useState(72000);
+  const [lotes, setLotes] = useState(1);
 
   // Calculated payment per period
   const calculatePagoPorPeriodo = (capital: number, tasa: number, periodo: number) => {
@@ -88,15 +106,101 @@ const Index = () => {
     recalculateAmortizacion(capital, tasa, periodo);
   }, [capital, tasa, periodo]);
 
+  // Calcular tablas derivadas cuando cambian las tablas base
+  React.useEffect(() => {
+    const newAmortizacion = calculateAmortizacion(inversiones);
+    setAmortizacion(newAmortizacion);
+
+    const newEstadoResultados = calculateEstadoResultados(personal, materiaPrima, depreciacion, newAmortizacion, inversiones);
+    setEstadoResultados(newEstadoResultados);
+
+    // Always update editable state
+    setEditableEstadoResultados(newEstadoResultados);
+
+    const newFlujoEfectivo = calculateFlujoEfectivo(newEstadoResultados, inversiones);
+    setFlujoEfectivo(newFlujoEfectivo);
+
+    const newRazonesFinancieras = calculateRazonesFinancieras(newEstadoResultados, newFlujoEfectivo);
+    setRazonesFinancieras(newRazonesFinancieras);
+  }, [personal, materiaPrima, depreciacion, inversiones]);
+
+  // Recalculate when editableEstadoResultados changes
+  React.useEffect(() => {
+    if (editableEstadoResultados.length > 0) {
+      // Since calculateEstadoResultados now calculates everything internally, we just need to recalculate
+      const newEstadoResultados = calculateEstadoResultados(personal, materiaPrima, depreciacion, amortizacion, inversiones);
+      setEstadoResultados(newEstadoResultados);
+
+      const newFlujoEfectivo = calculateFlujoEfectivo(newEstadoResultados, inversiones);
+      setFlujoEfectivo(newFlujoEfectivo);
+
+      const newRazonesFinancieras = calculateRazonesFinancieras(newEstadoResultados, newFlujoEfectivo);
+      setRazonesFinancieras(newRazonesFinancieras);
+    }
+  }, [editableEstadoResultados, personal, materiaPrima, depreciacion, amortizacion, inversiones]);
+
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [currentTable, setCurrentTable] = useState<string>("");
   const [editingData, setEditingData] = useState<Record<string, unknown> | null>(null);
+
+  // Categorize personal by areas
+  const administrativaDescriptions = [
+    'Gerente inventario', 'Coordinador de control de inventarios', 'Auxiliar de almacen', 'Auxiliar de Calidad', 'Auxiliar de Inventarios', 'Coordinador de compras/abastecimiento', 'Analista de Mercado', 'Gerente de Finanzas', 'Analista de Costos o Presupuestos', 'Contadora', 'Auxiliar de Caja'
+  ];
+  const ventasDescriptions = [
+    'Gerente de Marketing', 'Coordinador de Publicidad y Medios', 'Coordinador de Estrategias Comerciales', 'Coordinador de Servicio al Cliente'
+  ];
+  const produccionDescriptions = [
+    'Gerente de Operaciones de Cocina', 'Coordinador de Producción', 'Coordinador de Calidad y Seguridad Alimentaria', 'Auxiliar de Control de Calidad', 'Pastelero', 'Cocinero'
+  ];
+
+  // Categorize equipos by types
+  const maquinariaDescriptions = [
+    'Vitrina refrigerada horizontal (mostrador)', 'Vitrina refrigerada vertical - modelo A', 'Nevera vertical comercial 755 L', 'Máquina de café espresso 2 grupos', 'Molino de café profesional', 'Licuadora', 'Freidora industrial (1 un compartimiento)', 'Plancha para asar', 'Campana extractora comercial', 'Fabricador de hielo (10 kg - ejemplo)', 'Lavavajillas industrial (Claseq D3000 ej.)', 'Microondas'
+  ];
+  const mobiliarioOficinaDescriptions = [
+    'PC (para las ordenes)', 'Escritorio ejecutivo', 'Escritorio estándar', 'Silla ergonómica ejecutiva', 'Silla ergonómica estándar', 'Archivador metálico', 'Estantería', 'Computador de escritorio', 'Impresora multifuncional', 'Teléfono fijo', 'Router + Red local', 'Aire acondicionado', 'Cafetera y dispensador de agua', 'Extintores, señalización y botiquín'
+  ];
+  const planMediosDescriptions = [
+    'Facebook e instagram ADS', 'Volantes'
+  ];
+
+  const getPersonalByArea = () => {
+    const administrativa = personal.filter(p => administrativaDescriptions.includes(p.descripcion));
+    const ventas = personal.filter(p => ventasDescriptions.includes(p.descripcion));
+    const produccion = personal.filter(p => produccionDescriptions.includes(p.descripcion));
+
+    const totalAdministrativa = administrativa.reduce((sum, p) => sum + p.total, 0);
+    const totalVentas = ventas.reduce((sum, p) => sum + p.total, 0);
+    const totalProduccion = produccion.reduce((sum, p) => sum + p.total, 0);
+
+    return { administrativa, ventas, produccion, totalAdministrativa, totalVentas, totalProduccion };
+  };
+
+  const getEquiposByType = () => {
+    const maquinaria = equipos.filter(e => maquinariaDescriptions.includes(e.descripcion));
+    const mobiliarioOficina = equipos.filter(e => mobiliarioOficinaDescriptions.includes(e.descripcion));
+    const planMedios = equipos.filter(e => planMediosDescriptions.includes(e.descripcion));
+
+    const totalMaquinaria = maquinaria.reduce((sum, e) => sum + e.total, 0);
+    const totalMobiliarioOficina = mobiliarioOficina.reduce((sum, e) => sum + e.total, 0);
+    const totalPlanMedios = planMedios.reduce((sum, e) => sum + e.total, 0);
+
+    return { maquinaria, mobiliarioOficina, planMedios, totalMaquinaria, totalMobiliarioOficina, totalPlanMedios };
+  };
 
   const personalColumns = [
     { key: 'descripcion', label: 'Descripción' },
     { key: 'cantidad', label: 'Cantidad' },
     { key: 'sueldoMensual', label: 'Sueldo Mensual' },
     { key: 'sueldoAnual', label: 'Sueldo Anual' },
+    { key: 'primas', label: 'Primas' },
+    { key: 'cesantias', label: 'Cesantías' },
+    { key: 'interesesCesantias', label: 'Intereses Cesantías' },
+    { key: 'salud', label: 'Salud' },
+    { key: 'pension', label: 'Pensión' },
+    { key: 'arl', label: 'ARL' },
+    { key: 'vacaciones', label: 'Vacaciones' },
     { key: 'total', label: 'Total' }
   ];
 
@@ -142,7 +246,15 @@ const Index = () => {
   const estadoResultadosColumns = [
     { key: 'detalle', label: 'Detalle' },
     { key: 'año1', label: 'Año 1' },
-    { key: 'año2', label: 'Año 2' }
+    { key: 'año2', label: 'Año 2' },
+    { key: 'año3', label: 'Año 3' },
+    { key: 'año4', label: 'Año 4' },
+    { key: 'año5', label: 'Año 5' },
+    { key: 'año6', label: 'Año 6' },
+    { key: 'año7', label: 'Año 7' },
+    { key: 'año8', label: 'Año 8' },
+    { key: 'año9', label: 'Año 9' },
+    { key: 'año10', label: 'Año 10' }
   ];
 
   const flujoEfectivoColumns = [
@@ -220,11 +332,18 @@ const Index = () => {
 
   const estadoResultadosFields = [
     { key: 'detalle', label: 'Detalle', type: 'text' as const },
+    { key: 'año0', label: 'Año 0', type: 'number' as const },
     { key: 'año1', label: 'Año 1', type: 'number' as const },
     { key: 'año2', label: 'Año 2', type: 'number' as const },
     { key: 'año3', label: 'Año 3', type: 'number' as const },
     { key: 'año4', label: 'Año 4', type: 'number' as const },
-    { key: 'año5', label: 'Año 5', type: 'number' as const }
+    { key: 'año5', label: 'Año 5', type: 'number' as const },
+    { key: 'año6', label: 'Año 6', type: 'number' as const },
+    { key: 'año7', label: 'Año 7', type: 'number' as const },
+    { key: 'año8', label: 'Año 8', type: 'number' as const },
+    { key: 'año9', label: 'Año 9', type: 'number' as const },
+    { key: 'año10', label: 'Año 10', type: 'number' as const }
+
   ];
 
   const flujoEfectivoFields = [
@@ -247,6 +366,14 @@ const Index = () => {
   ];
 
   const handleEdit = (table: string, id: string) => {
+    // Solo permitir edición en tablas base
+    const baseTables = ['personal', 'materiaPrima', 'equipos', 'inversiones'];
+
+    if (!baseTables.includes(table)) {
+      toast.error('Esta tabla es de solo lectura. Los valores se calculan automáticamente.');
+      return;
+    }
+
     let data;
     switch (table) {
       case 'personal':
@@ -261,34 +388,45 @@ const Index = () => {
       case 'inversiones':
         data = inversiones.find(row => row.id === id);
         break;
-      case 'amortizacion':
-        data = amortizacion.find(row => row.id === id);
-        break;
-      case 'depreciacion':
-        data = depreciacion.find(row => row.id === id);
-        break;
-      case 'estadoResultados':
-        data = estadoResultados.find(row => row.id === id);
-        break;
-      case 'flujoEfectivo':
-        data = flujoEfectivo.find(row => row.id === id);
-        break;
-      case 'razonesFinancieras':
-        data = razonesFinancieras.find(row => row.id === id);
-        break;
     }
     setEditingData(data);
     setCurrentTable(table);
     setEditDialogOpen(true);
   };
 
+  const handleEstadoResultadosCellEdit = (rowId: string, columnKey: string, value: number) => {
+    setEditableEstadoResultados(prev =>
+      prev.map(row =>
+        row.id === rowId
+          ? { ...row, [columnKey]: value }
+          : row
+      )
+    );
+  };
+
   const handleAdd = (table: string) => {
+    // Solo permitir agregar en tablas base
+    const baseTables = ['personal', 'materiaPrima', 'equipos', 'inversiones'];
+
+    if (!baseTables.includes(table)) {
+      toast.error('Esta tabla es de solo lectura. Los valores se calculan automáticamente.');
+      return;
+    }
+
     setEditingData(null);
     setCurrentTable(table);
     setEditDialogOpen(true);
   };
 
   const handleDelete = (table: string, id: string) => {
+    // Solo permitir eliminación en tablas base
+    const baseTables = ['personal', 'materiaPrima', 'equipos', 'inversiones'];
+
+    if (!baseTables.includes(table)) {
+      toast.error('Esta tabla es de solo lectura. Los valores se calculan automáticamente.');
+      return;
+    }
+
     switch (table) {
       case 'personal':
         setPersonal(personal.filter(row => row.id !== id));
@@ -302,21 +440,6 @@ const Index = () => {
       case 'inversiones':
         setInversiones(inversiones.filter(row => row.id !== id));
         break;
-      case 'amortizacion':
-        setAmortizacion(amortizacion.filter(row => row.id !== id));
-        break;
-      case 'depreciacion':
-        setDepreciacion(depreciacion.filter(row => row.id !== id));
-        break;
-      case 'estadoResultados':
-        setEstadoResultados(estadoResultados.filter(row => row.id !== id));
-        break;
-      case 'flujoEfectivo':
-        setFlujoEfectivo(flujoEfectivo.filter(row => row.id !== id));
-        break;
-      case 'razonesFinancieras':
-        setRazonesFinancieras(razonesFinancieras.filter(row => row.id !== id));
-        break;
     }
     toast.success('Registro eliminado correctamente');
   };
@@ -324,26 +447,50 @@ const Index = () => {
   const handleSave = (data: Record<string, unknown>) => {
     const isEditing = editingData !== null;
 
+    // Solo permitir edición en tablas base
+    const baseTables = ['personal', 'materiaPrima', 'equipos', 'inversiones'];
+
+    if (!baseTables.includes(currentTable)) {
+      toast.error('Esta tabla es de solo lectura. Los valores se calculan automáticamente.');
+      return;
+    }
+
     switch (currentTable) {
       case 'personal':
+        // Recalculate total for personal
+        const personalData = data as unknown as PersonalRow;
+        const sueldoAnual = personalData.sueldoMensual * 12;
+        const total = sueldoAnual + personalData.primas + personalData.cesantias + personalData.interesesCesantias + personalData.salud + personalData.pension + personalData.arl + personalData.vacaciones;
+        const updatedPersonalData = { ...personalData, sueldoAnual, total };
+
         if (isEditing) {
-          setPersonal(personal.map(row => row.id === data.id ? data as unknown as PersonalRow : row));
+          setPersonal(personal.map(row => row.id === data.id ? updatedPersonalData : row));
         } else {
-          setPersonal([...personal, data as unknown as PersonalRow]);
+          setPersonal([...personal, updatedPersonalData]);
         }
         break;
       case 'materiaPrima':
+        // Recalculate costoTotal for materiaPrima
+        const materiaPrimaData = data as unknown as MateriaPrimaRow;
+        const costoTotal = materiaPrimaData.cantidad * materiaPrimaData.costoUnitario;
+        const updatedMateriaPrimaData = { ...materiaPrimaData, costoTotal };
+
         if (isEditing) {
-          setMateriaPrima(materiaPrima.map(row => row.id === data.id ? data as unknown as MateriaPrimaRow : row));
+          setMateriaPrima(materiaPrima.map(row => row.id === data.id ? updatedMateriaPrimaData : row));
         } else {
-          setMateriaPrima([...materiaPrima, data as unknown as MateriaPrimaRow]);
+          setMateriaPrima([...materiaPrima, updatedMateriaPrimaData]);
         }
         break;
       case 'equipos':
+        // Recalculate total for equipos
+        const equiposData = data as unknown as EquipoRow;
+        const totalEquipos = equiposData.cantidad * equiposData.costoUnitario;
+        const updatedEquiposData = { ...equiposData, total: totalEquipos };
+
         if (isEditing) {
-          setEquipos(equipos.map(row => row.id === data.id ? data as unknown as EquipoRow : row));
+          setEquipos(equipos.map(row => row.id === data.id ? updatedEquiposData : row));
         } else {
-          setEquipos([...equipos, data as unknown as EquipoRow]);
+          setEquipos([...equipos, updatedEquiposData]);
         }
         break;
       case 'inversiones':
@@ -351,41 +498,6 @@ const Index = () => {
           setInversiones(inversiones.map(row => row.id === data.id ? data as unknown as InversionRow : row));
         } else {
           setInversiones([...inversiones, data as unknown as InversionRow]);
-        }
-        break;
-      case 'amortizacion':
-        if (isEditing) {
-          setAmortizacion(amortizacion.map(row => row.id === data.id ? data as unknown as AmortizacionRow : row));
-        } else {
-          setAmortizacion([...amortizacion, data as unknown as AmortizacionRow]);
-        }
-        break;
-      case 'depreciacion':
-        if (isEditing) {
-          setDepreciacion(depreciacion.map(row => row.id === data.id ? data as unknown as DepreciacionRow : row));
-        } else {
-          setDepreciacion([...depreciacion, data as unknown as DepreciacionRow]);
-        }
-        break;
-      case 'estadoResultados':
-        if (isEditing) {
-          setEstadoResultados(estadoResultados.map(row => row.id === data.id ? data as unknown as EstadoResultadosRow : row));
-        } else {
-          setEstadoResultados([...estadoResultados, data as unknown as EstadoResultadosRow]);
-        }
-        break;
-      case 'flujoEfectivo':
-        if (isEditing) {
-          setFlujoEfectivo(flujoEfectivo.map(row => row.id === data.id ? data as unknown as FlujoEfectivoRow : row));
-        } else {
-          setFlujoEfectivo([...flujoEfectivo, data as unknown as FlujoEfectivoRow]);
-        }
-        break;
-      case 'razonesFinancieras':
-        if (isEditing) {
-          setRazonesFinancieras(razonesFinancieras.map(row => row.id === data.id ? data as unknown as RazonesFinancierasRow : row));
-        } else {
-          setRazonesFinancieras([...razonesFinancieras, data as unknown as RazonesFinancierasRow]);
         }
         break;
     }
@@ -523,13 +635,63 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Gestión de nómina y recursos humanos</p>
                 </div>
               </div>
-              <DataTable
-                columns={personalColumns}
-                data={personal}
-                onEdit={(id) => handleEdit('personal', id)}
-                onDelete={(id) => handleDelete('personal', id)}
-                onAdd={() => handleAdd('personal')}
-              />
+
+              {/* Totals Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">Área Administrativa</h3>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    ${getPersonalByArea().totalAdministrativa.toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                  <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">Área de Ventas</h3>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    ${getPersonalByArea().totalVentas.toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-2">Área de Producción</h3>
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    ${getPersonalByArea().totalProduccion.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <Tabs defaultValue="administrativa" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="administrativa">Área Administrativa</TabsTrigger>
+                  <TabsTrigger value="ventas">Área de Ventas</TabsTrigger>
+                  <TabsTrigger value="produccion">Área de Producción</TabsTrigger>
+                </TabsList>
+                <TabsContent value="administrativa" className="mt-4">
+                  <DataTable
+                    columns={personalColumns}
+                    data={personal.filter(p => administrativaDescriptions.includes(p.descripcion))}
+                    onEdit={(id) => handleEdit('personal', id)}
+                    onDelete={(id) => handleDelete('personal', id)}
+                    onAdd={() => handleAdd('personal')}
+                  />
+                </TabsContent>
+                <TabsContent value="ventas" className="mt-4">
+                  <DataTable
+                    columns={personalColumns}
+                    data={personal.filter(p => ventasDescriptions.includes(p.descripcion))}
+                    onEdit={(id) => handleEdit('personal', id)}
+                    onDelete={(id) => handleDelete('personal', id)}
+                    onAdd={() => handleAdd('personal')}
+                  />
+                </TabsContent>
+                <TabsContent value="produccion" className="mt-4">
+                  <DataTable
+                    columns={personalColumns}
+                    data={personal.filter(p => produccionDescriptions.includes(p.descripcion))}
+                    onEdit={(id) => handleEdit('personal', id)}
+                    onDelete={(id) => handleDelete('personal', id)}
+                    onAdd={() => handleAdd('personal')}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
 
@@ -544,6 +706,43 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Control de insumos y materiales</p>
                 </div>
               </div>
+
+              {/* Summary boxes */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Valor Total</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(materiaPrima.reduce((sum, mp) => sum + mp.costoTotal, 0))}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Costos Indirectos</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(materiaPrima.reduce((sum, mp) => sum + mp.costoTotal, 0) * 0.15)}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Producción</h3>
+                  <input
+                    type="number"
+                    value={produccion}
+                    onChange={(e) => setProduccion(Number(e.target.value))}
+                    className="w-full text-2xl font-bold text-foreground bg-transparent border-none outline-none"
+                  />
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Lotes</h3>
+                  <input
+                    type="number"
+                    value={lotes}
+                    onChange={(e) => setLotes(Number(e.target.value))}
+                    className="w-full text-2xl font-bold text-foreground bg-transparent border-none outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Total calculation box */}
+              <div className="bg-primary/10 rounded-lg p-4 border border-primary/20 mb-6">
+                <h3 className="text-sm font-medium text-primary mb-2">Total (Lotes × Valor Total × Producción)</h3>
+                <p className="text-3xl font-bold text-primary">{formatCurrency(lotes * materiaPrima.reduce((sum, mp) => sum + mp.costoTotal, 0) * produccion)}</p>
+              </div>
+
               <DataTable
                 columns={materiaPrimaColumns}
                 data={materiaPrima}
@@ -565,13 +764,63 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Inventario de activos fijos</p>
                 </div>
               </div>
-              <DataTable
-                columns={equiposColumns}
-                data={equipos}
-                onEdit={(id) => handleEdit('equipos', id)}
-                onDelete={(id) => handleDelete('equipos', id)}
-                onAdd={() => handleAdd('equipos')}
-              />
+
+              {/* Totals Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">Maquinaria</h3>
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                    ${getEquiposByType().totalMaquinaria.toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                  <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">Mobiliario y Equipos de Oficina</h3>
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+                    ${getEquiposByType().totalMobiliarioOficina.toLocaleString()}
+                  </p>
+                </div>
+                <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                  <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-2">Plan de Medios</h3>
+                  <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                    ${getEquiposByType().totalPlanMedios.toLocaleString()}
+                  </p>
+                </div>
+              </div>
+
+              <Tabs defaultValue="maquinaria" className="w-full">
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="maquinaria">Maquinaria</TabsTrigger>
+                  <TabsTrigger value="mobiliarioOficina">Mobiliario y Equipos de Oficina</TabsTrigger>
+                  <TabsTrigger value="planMedios">Plan de Medios</TabsTrigger>
+                </TabsList>
+                <TabsContent value="maquinaria" className="mt-4">
+                  <DataTable
+                    columns={equiposColumns}
+                    data={equipos.filter(e => maquinariaDescriptions.includes(e.descripcion))}
+                    onEdit={(id) => handleEdit('equipos', id)}
+                    onDelete={(id) => handleDelete('equipos', id)}
+                    onAdd={() => handleAdd('equipos')}
+                  />
+                </TabsContent>
+                <TabsContent value="mobiliarioOficina" className="mt-4">
+                  <DataTable
+                    columns={equiposColumns}
+                    data={equipos.filter(e => mobiliarioOficinaDescriptions.includes(e.descripcion))}
+                    onEdit={(id) => handleEdit('equipos', id)}
+                    onDelete={(id) => handleDelete('equipos', id)}
+                    onAdd={() => handleAdd('equipos')}
+                  />
+                </TabsContent>
+                <TabsContent value="planMedios" className="mt-4">
+                  <DataTable
+                    columns={equiposColumns}
+                    data={equipos.filter(e => planMediosDescriptions.includes(e.descripcion))}
+                    onEdit={(id) => handleEdit('equipos', id)}
+                    onDelete={(id) => handleDelete('equipos', id)}
+                    onAdd={() => handleAdd('equipos')}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </TabsContent>
 
@@ -586,6 +835,31 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Distribución de capital y financiamiento</p>
                 </div>
               </div>
+
+              {/* Summary boxes */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">100%</p>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Total Inversiones</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(inversiones.reduce((sum, inv) => sum + inv.inversionTotal, 0))}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">55%</p>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Fondos Propios</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(inversiones.reduce((sum, inv) => sum + inv.fondosPropios, 0))}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">30%</p>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Banco</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(inversiones.reduce((sum, inv) => sum + inv.banco, 0))}</p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">15%</p>
+                  <h3 className="text-sm font-medium text-muted-foreground mb-2">Otras Fuentes</h3>
+                  <p className="text-2xl font-bold text-foreground">{formatCurrency(inversiones.reduce((sum, inv) => sum + inv.otrasFuentes, 0))}</p>
+                </div>
+              </div>
+
               <DataTable
                 columns={inversionesColumns}
                 data={inversiones}
@@ -659,9 +933,9 @@ const Index = () => {
               <DataTable
                 columns={amortizacionColumns}
                 data={amortizacion}
-                onEdit={(id) => handleEdit('amortizacion', id)}
-                onDelete={(id) => handleDelete('amortizacion', id)}
-                onAdd={() => handleAdd('amortizacion')}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onAdd={() => {}}
               />
             </div>
           </TabsContent>
@@ -680,9 +954,9 @@ const Index = () => {
               <DataTable
                 columns={depreciacionColumns}
                 data={depreciacion}
-                onEdit={(id) => handleEdit('depreciacion', id)}
-                onDelete={(id) => handleDelete('depreciacion', id)}
-                onAdd={() => handleAdd('depreciacion')}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onAdd={() => {}}
               />
             </div>
           </TabsContent>
@@ -695,15 +969,17 @@ const Index = () => {
                 </div>
                 <div>
                   <h2 className="text-2xl font-bold text-foreground">Estado de Resultados</h2>
-                  <p className="text-sm text-muted-foreground">Análisis de ingresos y gastos proyectados</p>
+                  <p className="text-sm text-muted-foreground">Análisis de ingresos y gastos proyectados (haz clic en las celdas editables para modificar)</p>
                 </div>
               </div>
               <DataTable
                 columns={estadoResultadosColumns}
-                data={estadoResultados}
-                onEdit={(id) => handleEdit('estadoResultados', id)}
-                onDelete={(id) => handleDelete('estadoResultados', id)}
-                onAdd={() => handleAdd('estadoResultados')}
+                data={editableEstadoResultados}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onAdd={() => {}}
+                editableRowIds={["er-2", "er-3", "er-4", "er-5", "er-6", "er-7", "er-8", "er-9", "er-10", "er-11", "er-12", "er-13", "er-14", "er-15", "er-16", "er-17", "er-18", "er-19", "er-20"]}
+                onCellEdit={handleEstadoResultadosCellEdit}
               />
             </div>
           </TabsContent>
@@ -722,9 +998,9 @@ const Index = () => {
               <DataTable
                 columns={flujoEfectivoColumns}
                 data={flujoEfectivo}
-                onEdit={(id) => handleEdit('flujoEfectivo', id)}
-                onDelete={(id) => handleDelete('flujoEfectivo', id)}
-                onAdd={() => handleAdd('flujoEfectivo')}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onAdd={() => {}}
               />
             </div>
           </TabsContent>
@@ -743,9 +1019,9 @@ const Index = () => {
               <DataTable
                 columns={razonesFinancierasColumns}
                 data={razonesFinancieras}
-                onEdit={(id) => handleEdit('razonesFinancieras', id)}
-                onDelete={(id) => handleDelete('razonesFinancieras', id)}
-                onAdd={() => handleAdd('razonesFinancieras')}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onAdd={() => {}}
               />
             </div>
           </TabsContent>
