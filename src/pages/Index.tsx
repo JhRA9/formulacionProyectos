@@ -28,7 +28,7 @@ import {
   calculateEstadoResultados,
   calculateFlujoEfectivo,
   calculateRazonesFinancieras
-} from "@/utils/calculations";
+} from "@/utils/calculations.ts";
 import { PersonalRow, MateriaPrimaRow, EquipoRow, InversionRow, AmortizacionRow, DepreciacionRow, EstadoResultadosRow, FlujoEfectivoRow, RazonesFinancierasRow } from "@/types/excel-data";
 
 const Index = () => {

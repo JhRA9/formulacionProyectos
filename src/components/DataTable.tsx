@@ -1,3 +1,4 @@
+import React from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2, Plus } from "lucide-react";
@@ -14,9 +15,14 @@ interface DataTableProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onAdd: () => void;
+  editableRowIds?: string[];
+  onCellEdit?: (rowId: string, columnKey: string, value: any) => void;
 }
 
-export const DataTable = ({ columns, data, onEdit, onDelete, onAdd }: DataTableProps) => {
+export const DataTable = ({ columns, data, onEdit, onDelete, onAdd, editableRowIds = [], onCellEdit }: DataTableProps) => {
+  const [editingCell, setEditingCell] = React.useState<{ rowId: string; columnKey: string } | null>(null);
+  const [editValue, setEditValue] = React.useState<string>('');
+
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('es-CO', {
       style: 'currency',
@@ -24,6 +30,35 @@ export const DataTable = ({ columns, data, onEdit, onDelete, onAdd }: DataTableP
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(value);
+  };
+
+  const handleCellClick = (rowId: string, columnKey: string, currentValue: any) => {
+    if (editableRowIds.includes(rowId)) {
+      setEditingCell({ rowId, columnKey });
+      setEditValue(currentValue?.toString() || '');
+    }
+  };
+
+  const handleCellSave = () => {
+    if (editingCell && onCellEdit) {
+      const numericValue = parseFloat(editValue) || 0;
+      onCellEdit(editingCell.rowId, editingCell.columnKey, numericValue);
+    }
+    setEditingCell(null);
+    setEditValue('');
+  };
+
+  const handleCellCancel = () => {
+    setEditingCell(null);
+    setEditValue('');
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleCellSave();
+    } else if (e.key === 'Escape') {
+      handleCellCancel();
+    }
   };
 
   return (
@@ -59,16 +94,37 @@ export const DataTable = ({ columns, data, onEdit, onDelete, onAdd }: DataTableP
               ) : (
                 data.map((row) => (
                   <TableRow key={row.id} className="hover:bg-muted/30 transition-colors">
-                    {columns.map((column) => (
-                      <TableCell key={column.key} className="whitespace-nowrap">
-                        {column.format 
-                          ? column.format(row[column.key])
-                          : typeof row[column.key] === 'number' && column.key.toLowerCase().includes('costo') || column.key.toLowerCase().includes('sueldo') || column.key.toLowerCase().includes('total') || column.key.toLowerCase().includes('inversion') || column.key.toLowerCase().includes('pago') || column.key.toLowerCase().includes('saldo')
-                            ? formatCurrency(row[column.key])
-                            : row[column.key]
-                        }
-                      </TableCell>
-                    ))}
+                    {columns.map((column) => {
+                      const isEditable = editableRowIds.includes(row.id) && column.key !== 'detalle' && column.key !== 'id';
+                      const isEditing = editingCell?.rowId === row.id && editingCell?.columnKey === column.key;
+                      const cellValue = row[column.key];
+
+                      return (
+                        <TableCell
+                          key={column.key}
+                          className={`whitespace-nowrap ${isEditable ? 'cursor-pointer hover:bg-muted/50' : ''}`}
+                          onClick={() => isEditable && handleCellClick(row.id, column.key, cellValue)}
+                        >
+                          {isEditing ? (
+                            <input
+                              type="number"
+                              value={editValue}
+                              onChange={(e) => setEditValue(e.target.value)}
+                              onBlur={handleCellSave}
+                              onKeyDown={handleKeyDown}
+                              className="w-full bg-transparent border-none outline-none focus:ring-1 focus:ring-primary"
+                              autoFocus
+                            />
+                          ) : (
+                            column.format
+                              ? column.format(cellValue)
+                              : typeof cellValue === 'number' && (column.key.toLowerCase().includes('costo') || column.key.toLowerCase().includes('sueldo') || column.key.toLowerCase().includes('total') || column.key.toLowerCase().includes('inversion') || column.key.toLowerCase().includes('pago') || column.key.toLowerCase().includes('saldo') || column.key.toLowerCase().includes('año'))
+                                ? formatCurrency(cellValue)
+                                : cellValue
+                          )}
+                        </TableCell>
+                      );
+                    })}
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
